@@ -1,0 +1,4 @@
+---
+# defaults file for lae.nfs
+nfs_exports: []
+nfs_mounts: []

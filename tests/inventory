@@ -1,0 +1,9 @@
+[nfs:children]
+nfs-server
+nfs-client
+
+[nfs-server]
+test01.lxc
+
+[nfs-client]
+test02.lxc

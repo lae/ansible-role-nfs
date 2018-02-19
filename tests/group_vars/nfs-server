@@ -1,0 +1,8 @@
+---
+nfs_exports:
+  - path: /var/logs
+    export: "*(ro)"
+  - path: /home
+    export: "test02.lxc(rw)"
+  - path: /backups
+    export: "test02.lxc(rw,no_root_squash)"

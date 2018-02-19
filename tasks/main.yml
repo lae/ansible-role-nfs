@@ -1,0 +1,36 @@
+---
+# tasks file for lae.nfs
+- name: Gather OS specific variables
+  include_vars: "{{ item }}"
+  with_first_found:
+    - "{{ ansible_distribution|lower }}-{{ ansible_distribution_version }}.yml"
+    - "{{ ansible_distribution|lower }}-{{ ansible_distribution_major_version }}.yml"
+    - "{{ ansible_distribution|lower }}.yml"
+    - "{{ ansible_os_family|lower }}.yml"
+
+- include: "install_packages_{{ ansible_pkg_mgr }}.yml"
+
+- name: Create directories for NFS exports
+  file:
+    path: "{{ item.path }}"
+    state: directory
+  with_items: "{{ nfs_exports }}"
+  when: item.create is not defined or item.create
+
+- name: Configure NFS exports
+  blockinfile:
+    dest: /etc/exports
+    marker: "# {mark}: Ansible-managed NFS exports"
+    content: |
+      {% for export in nfs_exports %}
+      {{ export.path }} {{ export.export }}
+      {% endfor %}
+  when: nfs_exports
+  notify: reload nfs
+
+- name: Configure the NFS server daemon
+  service:
+    name: "{{ nfs_server_daemon }}"
+    state: "{{ 'started' if nfs_exports else 'stopped' }}"
+    enabled: "{{ 'yes' if nfs_exports else 'no' }}"
+  when: nfs_exports

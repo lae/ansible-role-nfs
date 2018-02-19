@@ -1,0 +1,10 @@
+---
+- name: Install required packages for NFS
+  apt:
+    name: "{{ item }}"
+    state: latest
+    cache_valid_time: 3600
+    update_cache: yes
+  with_items:
+    - nfs-common
+    - "{{'nfs-kernel-server' if nfs_exports else [] }}"

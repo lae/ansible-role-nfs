@@ -1,0 +1,4 @@
+---
+# handlers file for lae.nfs
+- name: reload nfs
+  command: exportfs -ra

@@ -1,0 +1,15 @@
+---
+- hosts: nfs-server
+  tasks:
+    - block:
+      - name: exports file
+        shell: cat /etc/exports
+      - name: NFS server status (systemd)
+        shell: "systemctl status nfs-kernel-server.service || systemctl status nfs-server.service"
+        when: "ansible_service_mgr == 'systemd'"
+      - name: NFS server logs (systemd)
+        shell: "journalctl --no-pager -xu nfs-kernel-server.service || journalctl --no-pager -xu nfs-server.service"
+        when: "ansible_service_mgr == 'systemd'"
+      - name: Other NFS server logs
+        shell: "grep -i nfs /var/log/messages || true"
+      ignore_errors: yes

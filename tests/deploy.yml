@@ -1,0 +1,5 @@
+---
+- hosts: nfs
+  any_errors_fatal: true
+  roles:
+    - ansible-role-nfs
