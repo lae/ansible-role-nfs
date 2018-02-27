@@ -26,7 +26,7 @@
   tasks:
     - block:
       - name: try mounting one
-        shell: "mount.nfs test01.lxc:/var/log /mnt/logs -t nfs -o ro -v"
+        shell: "mount.nfs test01.lxc:/var/log /mnt/logs -o ro -v"
       - name: configured filesystem mounts
         shell: cat /etc/fstab
       - name: NFS client logs, maybe
