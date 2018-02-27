@@ -11,7 +11,7 @@
     src: "{{ item.remote_host }}:{{ item.remote_path }}"
     fstype: nfs
     state: "{{ 'mounted' if (item.disabled is not defined or not item.disabled) else 'unmounted' }}"
-    opts: "{{ item.options }}"
+    opts: "{{ item.options | default(omit) }}"
   with_items: "{{ nfs_mounts }}"
 
 - name: Remove disabled NFS mounts
@@ -20,6 +20,6 @@
     src: "{{ item.remote_host }}:{{ item.remote_path }}"
     fstype: nfs
     state: absent
-    opts: "{{ item.options }}"
+    opts: "{{ item.options | default(omit) }}"
   with_items: "{{ nfs_mounts }}"
   when: item.disabled is defined and item.disabled 
