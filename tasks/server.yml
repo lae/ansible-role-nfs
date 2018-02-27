@@ -21,3 +21,6 @@
     name: "{{ nfs_server_daemon }}"
     state: "{{ 'started' if nfs_exports else 'stopped' }}"
     enabled: "{{ 'yes' if nfs_exports else 'no' }}"
+
+- name: Reload NFS exports
+  meta: flush_handlers
