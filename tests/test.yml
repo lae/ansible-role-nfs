@@ -1,6 +1,10 @@
 ---
 - hosts: nfs-server
   tasks:
+    - name: Create hello file in /backups
+      copy:
+        content: "hello"
+        dest: /backups/hello
     - block:
       - name: exports file
         shell: cat /etc/exports
@@ -11,5 +15,20 @@
         shell: "journalctl --no-pager -xu nfs-kernel-server.service || journalctl --no-pager -xu nfs-server.service"
         when: "ansible_service_mgr == 'systemd'"
       - name: Other NFS server logs
+        shell: "grep -i nfs /var/log/messages || true"
+      ignore_errors: yes
+
+- hosts: nfs-client
+  tasks:
+    - name: Read dmesg
+      slurp:
+        src: /mnt/logs/dmesg
+    - name: Check for hello file
+      stat:
+        path: /mnt/backups/hello
+    - block:
+      - name: configured filesystem mounts
+        shell: cat /etc/fstab
+      - name: NFS client logs, maybe
         shell: "grep -i nfs /var/log/messages || true"
       ignore_errors: yes

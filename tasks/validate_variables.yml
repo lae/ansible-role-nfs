@@ -1,0 +1,7 @@
+---
+- name: Ensure no duplicate exports exist
+  fail:
+    msg: "Found duplicate exports that may possible conflict, review your nfs_exports list."
+  when:
+    - false
+    # fix this later
