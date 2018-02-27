@@ -20,9 +20,8 @@
 
 - hosts: nfs-client
   tasks:
-    - name: Read lastlog
-      slurp:
-        src: /mnt/logs/lastlog
+    - name: Check that /mnt/logs is a mountpoint
+      command: mountpoint /mnt/logs
     - name: Check for hello file
       stat:
         path: /mnt/backups/hello
