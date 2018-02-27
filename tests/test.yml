@@ -20,9 +20,9 @@
 
 - hosts: nfs-client
   tasks:
-    - name: Read dmesg
+    - name: Read lastlog
       slurp:
-        src: /mnt/logs/dmesg
+        src: /mnt/logs/lastlog
     - name: Check for hello file
       stat:
         path: /mnt/backups/hello
