@@ -15,7 +15,7 @@
 - name: Start/Enable the rpcbind service
   service:
     name: rpcbind
-    state: started
+    state: restarted
     enabled: yes
 
 - import_tasks: server.yml
