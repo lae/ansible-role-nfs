@@ -16,11 +16,12 @@
       {% endfor %}
   notify: reload nfs
 
-- name: Configure the NFS server daemon
+
+- name: Start/Enable the NFS server daemon
   service:
     name: "{{ nfs_server_daemon }}"
-    state: "{{ 'started' if nfs_exports else 'stopped' }}"
-    enabled: "{{ 'yes' if nfs_exports else 'no' }}"
+    state: started
+    enabled: yes
 
 - name: Reload NFS exports
   meta: flush_handlers
