@@ -24,15 +24,29 @@ Example Playbook
     - lae.nfs
   vars:
     nfs_exports:
-      - path: /var/logs
-        export: "*(ro,sync,nohide)"
+      - path: /var/log
+        exports:
+          - "*(ro,sync,nohide)"
       - path: /home
-        export: "10.20.30.0/24(rw)"
+        exports:
+          - "10.20.30.0/24(rw)"
       - path: /backups
-        export: "10.20.30.0/24(rw,no_root_squash)"
+        exports:
+          - "10.20.30.0/24(rw,no_root_squash)"
 - hosts: nfs-client.local
   roles:
     - lae.nfs
   vars:
-    nfs_mounts: []
+    nfs_mounts:
+      - path: /mnt/logs
+        remote_host: nfs-server.local
+        remote_path: /var/log
+        options: ro
+      - path: /mnt/home
+        remote_host: nfs-server.local
+        remote_path: /home
+        disabled: yes
+      - path: /mnt/backups
+        remote_host: nfs-server.local
+        remote_path: /backups
 ```
