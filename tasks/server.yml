@@ -1,0 +1,26 @@
+---
+- name: Create directories for NFS exports
+  file:
+    path: "{{ item.path }}"
+    state: directory
+  with_items: "{{ nfs_exports }}"
+  when: item.create is not defined or item.create
+
+- name: Configure NFS exports
+  blockinfile:
+    dest: /etc/exports
+    marker: "# {mark}: Ansible-managed NFS exports"
+    content: |
+      {% for export in nfs_exports %}
+      {{ export.path }} {{ export.exports | join(",") }}
+      {% endfor %}
+  notify: reload nfs
+
+- name: Configure the NFS server daemon
+  service:
+    name: "{{ nfs_server_daemon }}"
+    state: "{{ 'started' if nfs_exports else 'stopped' }}"
+    enabled: "{{ 'yes' if nfs_exports else 'no' }}"
+
+- name: Reload NFS exports
+  meta: flush_handlers

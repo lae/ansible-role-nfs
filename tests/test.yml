@@ -12,4 +12,26 @@
         when: "ansible_service_mgr == 'systemd'"
       - name: Other NFS server logs
         shell: "grep -i nfs /var/log/messages || true"
+      - name: rpcinfo
+        shell: "rpcinfo -p"
+      - name: showmount
+        shell: "showmount -e"
       ignore_errors: yes
+    - name: Create hello file in /backups
+      copy:
+        content: "hello"
+        dest: /backups/hello
+
+- hosts: nfs-client
+  tasks:
+    - block:
+      - name: configured filesystem mounts
+        shell: cat /etc/fstab
+      - name: NFS client logs, maybe
+        shell: "grep -i nfs /var/log/messages || true"
+      ignore_errors: yes
+    - name: Check that /mnt/logs is a mountpoint
+      command: mountpoint /mnt/logs
+    - name: Check for hello file
+      stat:
+        path: /mnt/backups/hello

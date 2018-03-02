@@ -1,0 +1,25 @@
+---
+- name: Create directories for NFS mounts
+  file:
+    path: "{{ item.path }}"
+    state: directory
+  with_items: "{{ nfs_mounts }}"
+
+- name: Configure NFS mounts
+  mount:
+    path: "{{ item.path }}"
+    src: "{{ item.remote_host }}:{{ item.remote_path }}"
+    fstype: nfs
+    state: "{{ 'mounted' if (item.disabled is not defined or not item.disabled) else 'unmounted' }}"
+    opts: "{{ item.options | default(omit) }}"
+  with_items: "{{ nfs_mounts }}"
+
+- name: Remove disabled NFS mounts
+  mount:
+    path: "{{ item.path }}"
+    src: "{{ item.remote_host }}:{{ item.remote_path }}"
+    fstype: nfs
+    state: absent
+    opts: "{{ item.options | default(omit) }}"
+  with_items: "{{ nfs_mounts }}"
+  when: item.disabled is defined and item.disabled 

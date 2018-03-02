@@ -1,8 +1,11 @@
 ---
 nfs_exports:
-  - path: /var/logs
-    export: "*(ro)"
+  - path: /var/log
+    exports:
+      - "*(ro)"
   - path: /home
-    export: "test02.lxc(rw)"
+    exports:
+      - "test02.lxc(rw)"
   - path: /backups
-    export: "test02.lxc(rw,no_root_squash)"
+    exports:
+      - "test02.lxc(rw,no_root_squash)"
