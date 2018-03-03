@@ -12,7 +12,7 @@
     marker: "# {mark}: Ansible-managed NFS exports"
     content: |
       {% for export in nfs_exports %}
-      {{ export.path }} {{ export.exports | join(",") }}
+      {{ export.path }} {{ export.exports | join(" ") }}
       {% endfor %}
   notify: reload nfs
 
