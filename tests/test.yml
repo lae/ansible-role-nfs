@@ -17,10 +17,12 @@
       - name: showmount
         shell: "showmount -e"
       ignore_errors: yes
+      become: True
     - name: Create hello file in /backups
       copy:
         content: "hello"
         dest: /backups/hello
+      become: True
 
 - hosts: nfs-client
   tasks:
@@ -30,6 +32,7 @@
       - name: NFS client logs, maybe
         shell: "grep -i nfs /var/log/messages || true"
       ignore_errors: yes
+      become: True
     - name: Check that /mnt/logs is a mountpoint
       command: mountpoint /mnt/logs
     - name: Check for hello file

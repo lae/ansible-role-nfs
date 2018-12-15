@@ -6,7 +6,7 @@ nfs_exports:
   - path: /home
     exports:
       - "{{ inventory_hostname | replace('server', 'client') }}(rw)"
-      - "deafbeef.local(ro)" # I have no idea, just random test data? lol
+      - "127.1.1.1(ro)" # doesn't exist, but used for testing multiple exports
   - path: /backups
     exports:
       - "{{ inventory_hostname | replace('server', 'client') }}(rw,no_root_squash)"
