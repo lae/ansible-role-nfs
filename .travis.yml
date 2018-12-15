@@ -5,34 +5,33 @@ dist: trusty
 cache:
   directories: [ '$HOME/lxc' ]
   pip: true
-env:
-#- LXC_DISTRO=debian LXC_RELEASE=jessie
-- LXC_DISTRO=debian LXC_RELEASE=stretch
-- LXC_DISTRO=ubuntu LXC_RELEASE=xenial
-- LXC_DISTRO=centos LXC_RELEASE=7
-- LXC_DISTRO=fedora LXC_RELEASE=27
 matrix:
   fast_finish: true
-before_cache:
-- 'sudo mkdir $HOME/lxc && sudo tar cf $HOME/lxc/cache.tar /var/cache/lxc/ &&
-  sudo chown $USER: $HOME/lxc/cache.tar'
+env:
+- ANSIBLE_GIT_VERSION='devel' # 2.8.x development branch
+- ANSIBLE_VERSION='<2.8.0' # 2.7.x
+- ANSIBLE_VERSION='<2.7.0' # 2.6.x
 install:
-- sudo tar xf $HOME/lxc/cache.tar -C / || true
-- sudo apt-get install -y expect-dev
-- pip install ansible
+- if [ "$ANSIBLE_GIT_VERSION" ]; then pip install "https://github.com/ansible/ansible/archive/${ANSIBLE_GIT_VERSION}.tar.gz";
+  else pip install "ansible${ANSIBLE_VERSION}"; fi;
+  pip install --pre ansible-lint
 - ansible --version
-- printf '[defaults]\nroles_path=../\ncallback_whitelist=profile_tasks' >ansible.cfg
 - ansible-galaxy install lae.travis-lxc
-- ansible-playbook -vvv tests/install.yml -i tests/inventory
+- ansible-playbook tests/install.yml -i tests/inventory
+- git archive --format tar.gz HEAD > lae.nfs.tar.gz && ansible-galaxy install
+  lae.nfs.tar.gz,$(git rev-parse HEAD),lae.nfs && rm lae.nfs.tar.gz
+before_script: cd tests/
 script:
-- ansible-playbook tests/deploy.yml -i tests/inventory --syntax-check
-- ansible-playbook tests/deploy.yml -i tests/inventory
-- 'ANSIBLE_STDOUT_CALLBACK=debug unbuffer ansible-playbook -vv tests/deploy.yml
-  -i tests/inventory >/tmp/idempotency.log 2>&1 ||
-  (e=$?; cat /tmp/idempotency.log; exit $e)'
-- 'grep -A1 "PLAY RECAP" /tmp/idempotency.log | grep -qP "changed=0.*failed=0" &&
-  (echo "Idempotence: PASS"; exit 0) ||
-  (echo "Idempotence: FAIL"; cat /tmp/idempotency.log; exit 1)'
-- ANSIBLE_STDOUT_CALLBACK=debug ansible-playbook -v tests/test.yml -i tests/inventory
+- ansible-lint ../ || true
+- ansible-playbook -i inventory deploy.yml --syntax-check
+- ANSIBLE_STDOUT_CALLBACK=debug ansible-playbook -i inventory deploy.yml
+- 'ANSIBLE_STDOUT_CALLBACK=debug unbuffer ansible-playbook -vvi inventory
+  deploy.yml > play.log || (e=$?; cat play.log; exit $e); printf "Idempotence: ";
+  grep -A1 "PLAY RECAP" play.log | grep -qP "changed=0 .*failed=0 .*"
+  && (echo "PASS"; exit 0) || (echo "FAIL"; cat play.log; exit 1)'
+- ANSIBLE_STDOUT_CALLBACK=debug ansible-playbook -i inventory -v test.yml
 notifications:
-  webhooks: https://galaxy.ansible.com/api/v1/notifications/
+  webhooks:
+    urls:
+      - https://galaxy.ansible.com/api/v1/notifications/
+      - https://t2d.idolactiviti.es/notify

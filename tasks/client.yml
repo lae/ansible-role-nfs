@@ -22,4 +22,4 @@
     state: absent
     opts: "{{ item.options | default(omit) }}"
   with_items: "{{ nfs_mounts }}"
-  when: item.disabled is defined and item.disabled 
+  when: item.disabled is defined and item.disabled

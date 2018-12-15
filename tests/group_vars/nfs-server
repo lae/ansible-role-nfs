@@ -5,8 +5,8 @@ nfs_exports:
       - "*(ro)"
   - path: /home
     exports:
-      - "test02.lxc(rw)"
-      - "deafbeef.local(ro)"
+      - "{{ inventory_hostname | replace('server', 'client') }}(rw)"
+      - "deafbeef.local(ro)" # I have no idea, just random test data? lol
   - path: /backups
     exports:
-      - "test02.lxc(rw,no_root_squash)"
+      - "{{ inventory_hostname | replace('server', 'client') }}(rw,no_root_squash)"

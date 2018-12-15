@@ -1,7 +1,5 @@
 ---
 - name: Install required packages for NFS
   dnf:
-    name: "{{ item }}"
-    state: latest
-  with_items:
-    - nfs-utils
+    name: nfs-utils
+    state: present

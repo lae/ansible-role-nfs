@@ -1,13 +1,13 @@
 ---
 nfs_mounts:
   - path: /mnt/logs
-    remote_host: test01.lxc
+    remote_host: "{{ inventory_hostname | replace('client', 'server') }}"
     remote_path: /var/log
     options: ro
   - path: /mnt/home
-    remote_host: test01.lxc
+    remote_host: "{{ inventory_hostname | replace('client', 'server') }}"
     remote_path: /home
     disabled: yes
   - path: /mnt/backups
-    remote_host: test01.lxc
+    remote_host: "{{ inventory_hostname | replace('client', 'server') }}"
     remote_path: /backups

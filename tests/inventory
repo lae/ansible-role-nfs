@@ -3,7 +3,13 @@ nfs-server
 nfs-client
 
 [nfs-server]
-test01.lxc
+debian-stretch-server
+centos-7-server
+ubuntu-bionic-server
+ubuntu-xenial-server
 
 [nfs-client]
-test02.lxc
+debian-stretch-client
+centos-7-client
+ubuntu-bionic-client
+ubuntu-xenial-client

@@ -2,6 +2,13 @@
 - hosts: localhost
   connection: local
   roles:
-    - { name: lae.travis-lxc }
+    - lae.travis-lxc
   vars:
-    host_quantity: 2
+    test_profiles:
+      - profile: debian-stretch
+      - profile: ubuntu-bionic
+      - profile: ubuntu-xenial
+      - profile: centos-7
+    test_host_suffixes:
+      - server
+      - client
